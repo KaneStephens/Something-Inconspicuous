@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import * as usersData from '../data.json'
+import { pouchPrices } from './utils/prices';
+import { formatCatNames, calculateTotalPrice } from './utils/helpers';
 import { User } from './utils/types';
 
 @Injectable()
@@ -17,17 +19,13 @@ export class AppService {
 
   getNextDelivery(userId: string) {
     const user = this.getUserData(userId);
-
-    const catNames = user.cats.filter((cat) => cat.subscriptionActive).map((cat) => cat.name)
-    const catNamesFormatted =
-      catNames.length > 1
-        ? `${catNames.slice(0, -1).join(', ')} and ${catNames.slice(-1)}`
-        : catNames[0];
+    const catNamesFormatted = formatCatNames(user.cats);
+    const totalPrice = calculateTotalPrice(user.cats, pouchPrices);
 
     return {
       title: `Your next delivery for ${catNamesFormatted}`,
       message: `Hey ${user.firstName}! In two days' time, we'll be charging you for your next order for ${catNamesFormatted}'s fresh food.`,
-      totalPrice: 0,
+      totalPrice: totalPrice.toFixed(2),
       freeGift: false,
     };
   }
