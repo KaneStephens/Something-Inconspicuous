@@ -6,7 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('your-next-delivery/:userId')
-  getUserData(@Param('userId') userId: string) {
-    return this.appService.getUserData(userId)
+  getNextDelivery(@Param('userId') userId: string) {
+    return this.appService.getNextDelivery(userId)
   }
 }
